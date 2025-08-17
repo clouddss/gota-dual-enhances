@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Enhances</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.28.1/tabler-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+</head>
+
+<body ondragstart="return false" ondrop="return false">
+
+    <div class="error-banner"></div>
+
+    <div id="canvas-container">
+        <div id="canvas-background"></div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="notification-container" class="notification-container"></div>
+
+    <div class="hud-panel">
+        <div class="top-left ui-scale">
+
+            <div id="score-panels">
+                <div id="score-panel" class="ui-pane interface-color">
+                    <div class="score-panel-header">
+                        <span>Player 1</span>
+                    </div>
+                    <p id="pId">ID: <span>0</span></p>
+                    <p id="pServer">Server: <span>None</span></p>
+                    <p id="pFps">FPS: <span>0</span></p>
+                    <p id="pPing">Ping: <span>0ms</span></p>
+                    <p id="pMass">Mass: <span>0</span></p>
+                    <p id="pScore">Score: <span>0</span></p>
+                    <p id="pCells">Cells: <span>0/16</span></p>
+                    <p id="pMouse" class="text-red d-none mouse-frozen-text">MOUSE FROZEN</p>
+                </div>
+
+                <div id="score-panel2" class="ui-pane interface-color">
+                    <div class="score-panel-header">
+                        <span>Player 2</span>
+                    </div>
+                    <p id="p2Id">ID: <span>0</span></p>
+                    <p id="p2Server">Server: <span>None</span></p>
+                    <p id="p2Fps">FPS: <span>0</span></p>
+                    <p id="p2Ping">Ping: <span>0ms</span></p>
+                    <p id="p2Mass">Mass: <span>0</span></p>
+                    <p id="p2Score">Score: <span>0</span></p>
+                    <p id="p2Cells">Cells: <span>0/16</span></p>
+                    <p id="p2Mouse" class="text-red d-none mouse-frozen-text">MOUSE FROZEN</p>
+                </div>
+            </div>
+
+            <div id="party-panel" class="ui-pane interface-color hud-panel" style="display: none;">
+                <p id="party-header">Party</p>
+                <div id="party-divider"></div>
+                <canvas id="party-canvas"></canvas>
+                <button id="btn-leave-party" class="gota-btn">Leave Party</button>
+
+            </div>
+        </div>
+
+        <div class="top-right ui-scale">
+            <div id="leaderboard-panel" class="ui-pane interface-color">
+                <p class="lh" id="leaderboard-header">Leaderboard</p>
+                <canvas id="leaderboard-canvas" width="10" height="10"></canvas>
+                <div id="scrimmage-btn-leave" style="display: none;">
+                    <button id="btn-leave-match" class="gota-btn">Leave</button>
+                </div>
+            </div>
+
+            <div id="extra-panel" class="ui-pane interface-color"
+                style="position: absolute; top: 0; right: 0; width: 200px; font-family: Calibri; font-weight: 700; font-size: 16px; height: auto; border: none;">
+                <p id="extra-reset-timer">
+                    <span id="resetTime">00:00</span>
+                </p>
+                <p id="extra-spectators">
+                    <span id="spectatorCount">0</span>
+                </p>
+                <p id="extra-respawn-cooldown">
+                    Respawn: <span id="respawnCooldown">00:00</span>
+                </p>
+            </div>
+        </div>
+
+        <div id="chat-panel" class="ui-pane ui-scale">
+            <div id="chat-tab-container" class="interface-color">
+
+            </div>
+            <div id="chat-container" class="interface-color">
+
+            </div>
+            <div id="chat-components">
+                <div id="chat-resize"></div>
+                <input id="chat-input" autocomplete="off">
+                <button id="chat-emote-btn"></button>
+                <div id="emote-panel" class="ui-pane interface-color">
+                    <h3>Emotes</h3>
+                    <ul class="emote-list"></ul>
+                    <h3>Gifs</h3>
+                    <ul class="gif-list"></ul>
+                </div>
+                <div id="autocomplete-panel" class="ui-pane interface-color">
+                </div>
+            </div>
+        </div>
+
+        <div id="minimap-panel" class="ui-pane interface-color ui-scale">
+            <div class="corner-borders"></div>
+            <div id="minimap-coordinates">&nbsp;</div>
+            <canvas id="minimap-canvas" width="250" height="250"></canvas>
+        </div>
+    </div>
+
+    <!-- <div id="preroll"></div> -->
+
+    <div id="main">
+        <div class="ui-container">
+            <!-- Left Panel: Main Application -->
+            <div class="main-panel">
+                <header class="panel-header">
+                    <div class="logo">
+                        <i class="fa-solid fa-circle-nodes logo-icon"></i>
+                        <span>Dual Enhances</span>
+                        <span class="badge-beta">Beta - 1.0.0</span>
+                    </div>
+                    <div class="header-actions">
+                        <button data-modal-target="dual" class="icon-button"><i
+                                class="fa-solid fa-circle-nodes"></i></button>
+                        <button data-modal-target="keybinds" class="icon-button"><i
+                                class="fa-solid fa-keyboard"></i></button>
+                        <button data-modal-target="themes" class="icon-button"><i
+                                class="fa-solid fa-palette"></i></button>
+                        <button data-modal-target="settings" class="icon-button"><i
+                                class="fa-solid fa-gear"></i></button>
+                    </div>
+                </header>
+
+                <main class="panel-content">
+                    <!-- Profile Section -->
+                    <section class="profile-section" style="display: none;">
+                        <div class="profile-card">
+                            <div class="profile-avatar" id="profile-avatar-icon">
+                                <i class="fa-solid fa-user"></i> <!-- Default: Updated by JS -->
+                            </div>
+                            <div class="profile-details">
+                                <select id="account-selector" class="account-selector" aria-label="Select Account">
+                                    <option value="main" selected="">Account 1</option>
+                                    <option value="bot">Account 2</option>
+                                </select>
+                                <div class="level-xp-container" style="display: flex;">
+                                    <span class="profile-level" id="profile-level">Level 131</span>
+                                    <div class="xp-bar-wrapper">
+                                        <div class="xp-bar-track">
+                                            <div class="xp-bar-progress" id="xp-bar-progress" style="width: 85%;"></div>
+                                        </div>
+                                        <span class="xp-text" id="xp-text">14,580 / 17,152</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Action Section -->
+                    <section class="action-section">
+                        <!-- <div class="account-navbar">
+                            <div class="account-nav-item active" data-tab="account1">
+                                <i class="material-icons">person</i>
+                                <span>P1</span>
+                            </div>
+                            <div class="account-nav-item" data-tab="account2">
+                                <i class="material-icons">group</i>
+                                <span>P2</span>
+                            </div>
+                        </div> -->
+                        <div class ="name-boxes" >  
+                        <div class="input-group">
+                            <label for="name-box" class="input-label">Name1</label>
+                            <div class="input-field-wrapper">
+                                <i class="fa-solid fa-signature input-icon"></i>
+                                <input type="text" class="name-box" id="name-box" maxlength="20"
+                                    placeholder="Enter your tag">
+                            </div>
+
+                             <label for="name-box2" class="input-label">Name2</label>
+                            <div class="input-field-wrapper">
+                                <i class="fa-solid fa-signature input-icon"></i>
+                                <input type="text" class="name-box2" id="name-box2" maxlength="20"
+                                    placeholder="Enter your tag">
+                            </div>  
+                        </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="button primary-button" id="btn-play">
+                                <i class="fa-solid fa-play"></i> Connect
+                            </button>
+                            <button class="button secondary-button" id="btn-spec">
+                                <i class="fa-solid fa-binoculars"></i> Spectate
+                            </button>
+                        </div>
+                    </section>
+                </main>
+            </div>
+
+            <!-- Server List -->
+            <div class="server-panel">
+                <header class="panel-header server-header">
+                    <h2 class="section-heading">
+                        <i class="fa-solid fa-server"></i>
+                        <span style="height: 15px;">Servers</span>
+                    </h2>
+                    <button class="icon-button refresh-button" id="refresh-servers" title="Refresh List">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </header>
+                <ul id="server-tab-container">
+                    <li region="eu" id="server-tab-eu" class="server-tab server-active" title="Europe">
+                        <span>EU</span>
+                    </li>
+                    <li region="na" id="server-tab-na" class="server-tab" title="North America">
+                        <span>NA</span>
+                    </li>
+                </ul>
+                <div class="server-list-container" id="main-servers">
+                    <div class="server-container">
+
+                        <div id="server-content">
+                            <div id="servers-eu" style="display: block;">
+                                <ul id="servers-body-eu" class="server-list"></ul>
+                            </div>
+
+                            <div id="servers-na" style="display: none;">
+                                <ul id="servers-body-na" class="server-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="modals">
+        <div class="modal-overlay" data-modal-id="settings">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h2 class="modal-title">Settings</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body options-container">
+                    <table class="options-table">
+                        <thead>
+                            <tr>
+                                <th colspan="4">Privacy Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">Allow Cookies</td>
+                                <td><input type="checkbox" id="cc_acceptCookies" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Show profile1 on global leaderboards</td>
+                                <td><input type="checkbox" id="cGlobalLeaderboard" disabled="true" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Show profile2 on global leaderboards</td>
+                                <td><input type="checkbox" id="cGlobalLeaderboard2" disabled="true" /></td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="4">Performance Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">Quality</td>
+                                <td>
+                                    <select id="sQuality" class="select-input">
+                                        <option value="ULTRA">Ultra</option>
+                                        <option value="HIGH">High</option>
+                                        <option value="MEDIUM">Medium</option>
+                                        <option value="LOW">Low</option>
+                                        <option value="VERYLOW">Very Low</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Renderer</td>
+                                <td>
+                                    <select id="sRenderType" class="select-input">
+                                        <option value="AUTO">Auto</option>
+                                        <option value="WEBGL">WebGl</option>
+                                        <option value="CANVAS">Canvas</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Disable Anti Aliasing</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cDisableAA" /></td>
+                            </tr>
+                            <tr id="performance-refresh" style="display:none;">
+                                <td colspan="4" class="red">Refresh Required!</td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="4">Render Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">Show Border</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cShowBorder" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Food</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideFood"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Transparent Cells</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cTransCells" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Disable Auto Name Hiding</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cDisableAutoNameHiding" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Disable Auto Food Hiding</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cDisableAutoFoodHiding" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Name Outlines</td>
+                                <td>
+                                    <select id="sTextOutlines" class="select-input">
+                                        <option value="THICK">Thick</option>
+                                        <option value="THIN">Thin</option>
+                                        <option value="NONE">Off</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Show Mass</td>
+                                <td>
+                                    <select id="sShowMass" class="select-input">
+                                        <option value="ALL">All</option>
+                                        <option value="PARTY">Party</option>
+                                        <option value="SELF">Self</option>
+                                        <option value="NONE">None</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Show Names</td>
+                                <td>
+                                    <select id="sShowNames" class="select-input">
+                                        <option value="ALL">All</option>
+                                        <option value="PARTY">Party</option>
+                                        <option value="SELF">Self</option>
+                                        <option value="NONE">None</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Show Skins</td>
+                                <td>
+                                    <select id="sShowSkins" class="select-input">
+                                        <option value="ALL">All</option>
+                                        <option value="PARTY">Party</option>
+                                        <option value="SELF">Self</option>
+                                        <option value="NONE">None</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Mass Type</td>
+                                <td>
+                                    <select id="sMassType" class="select-input">
+                                        <option value="DEFAULT">Default</option>
+                                        <option value="SHORT">Short</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="4">General Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2" style="overflow-x: visible" data-balloon="Default: 5 seconds"
+                                    data-balloon-pos="up">Reconnect (secs): <input class="options-input"
+                                        id="reconnectPeriod" style="float: none;"></td>
+                                <td colspan="2"><input type="range" id="rReconnectPeriod" min="0" max="10" value="5"
+                                        step="1" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Auto Respawn</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cAutoRespawn" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Silent Login</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cSilentLogin" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Disable Auto Zoom</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cDisableAutoZoom" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Auto Decline Party Invites</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cAutoDecline" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" data-balloon="Stop ejecting mass when the window loses focus."
+                                    data-balloon-pos="up" data-balloon-length="fit">Disable Persistent Mass Ejecting
+                                </td>
+                                <td><input type="checkbox" class="checkbox-options" id="cDisablePersistEjectMass" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="overflow-x: visible" data-balloon="Default: 90"
+                                    data-balloon-pos="up">Animation Delay: <input class="options-input"
+                                        id="animationDelay" style="float: none;"></td>
+                                <td colspan="2"><input type="range" id="rAnimationDelay" min="25" max="250" value="90"
+                                        step="1" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="overflow-x: visible" data-balloon="Default: 100"
+                                    data-balloon-pos="up">View Distance: <input class="options-input" id="viewDistance"
+                                        style="float: none;"></td>
+                                <td colspan="2"><input type="range" id="rViewDistance" min="50" max="150" value="100"
+                                        step="1" /></td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="4">UI Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">Hide Chat</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideChat" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Minimap</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideMinimap" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Party Panel</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHidePartyPanel" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Leaderboard</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideLeaderboard" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Sub-Leaderboard</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideExtraPanel" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Show Coordinates</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cShowCoordinates" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Colored Ping</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cColoredPing" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Colored Cell Count</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cColoredCellCount" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Resizable Chat</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cResizableChat" /></td>
+                            </tr>
+                            <tr>
+                                <td><a id="aEditChatTabs" href="#">Edit Chat Tabs</a></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">UI Scale: <input id="uiScale" class="options-input"
+                                        style="float: none;"> %</td>
+                                <td colspan="2"><input type="range" id="rUiScale" min="0.50" max="1.25" value="1.00"
+                                        step="0.01" /></td>
+                            </tr>
+                        </tbody>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="4" class="text-left">Score Panel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">Style</td>
+                                <td>
+                                    <select id="sScorePanel" class="select-input">
+                                        <option value="0">Hidden</option>
+                                        <option value="1">Horizontal</option>
+                                        <option value="2">Vertical</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="4">Streamer Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">Hide ID</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideId" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Hide Server</td>
+                                <td><input type="checkbox" class="checkbox-options" id="cHideServer" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" data-modal-id="keybinds">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h2 class="modal-title" style="
+    display: flex;
+    align-items: center;
+    gap: 10px;
+">
+                        Keybinds
+                        <button id="btn-reset-keybinds" class="gota-btn" style="
+                      padding: 5px;
+    background: var(--red-18);
+    border: solid 1px var(--red-15);
+    color: var(--red-5);">Reset Keybinds</button>
+                    </h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+
+                <div class="modal-body options-container">
+                    <div class="keybind-list dual-hotkeys-table">
+                        <div class="section-title">Basic Hotkeys</div>
+
+                        <div class="keybind-row">
+                            <span>Context Menu</span>
+                            <button id="kContextMenu" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Toggle Spectate Mode</span>
+                            <button id="kToggleSpec" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Eject Mass</span>
+                            <button id="kEjectMass" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Split</span>
+                            <button id="kSplit" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Double Split (4x)</span>
+                            <button id="kDoubleSplit" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Triple Split (8x)</span>
+                            <button id="kTripleSplit" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Quad Split (16x)</span>
+                            <button id="kQuadSplit" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Hexa Split (64x)</span>
+                            <button id="kHexaSplit" class="keybinds-btn"></button>
+                        </div>
+                        <div class="keybind-row">
+                            <span>Freeze Mouse</span>
+                            <button id="kFreezeMouse" class="keybinds-btn"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" data-modal-id="dual">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h2 class="modal-title">Extra Options</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body options-container">
+                    <div class="dual-settings-content">
+
+                        <!-- Options Tab (All Dropdowns Here) -->
+                        <div id="dual-options">
+                            <table class="options-table dual-options-table">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4">Camera Settings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Camera Mode
+                                                </div>
+                                                <div id="dualCameraModeGroup" class="dual-choice-group"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" data-balloon="Dual Camera Mode" data-balloon-pos="up"
+                                            data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Dual Mode
+                                                </div>
+                                                <div id="dualDualModeTargetGroup" class="dual-choice-group">
+                                                    <input type="checkbox" class="checkbox-options" id="cDualMode">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" data-balloon="Default: 10" data-balloon-pos="up"
+                                            data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Camera Delay
+                                                </div>
+                                                <div id="dualCamDelayTargetGroup" class="dual-choice-group">
+                                                    <input class="options-input" id="camDelay" style="float: none;" />
+                                                    <input type="range" id="rCamDelay" min="10" max="200" value="10"
+                                                        step="1" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <thead>
+                                    <tr>
+                                        <th colspan="4">Fast Feed Settings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="fastFeedTarget">
+                                        <td colspan="4">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Fast Feed Mode
+                                                </div>
+                                                <div id="dualFastFeedTargetGroup" class="dual-choice-group"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <thead>
+                                    <tr>
+                                        <th colspan="4">Linesplit Settings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="LinesplitTarget">
+                                        <td colspan="4">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Linesplit Mode
+                                                </div>
+                                                <div id="dualLinesplitTargetGroup" class="dual-choice-group"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="PlayerSwitchTarget">
+                                        <td colspan="4">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Player Switch Mode
+                                                </div>
+                                                <div id="dualPlayerSwitchModeGroup" class="dual-choice-group"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="CameraModeTarget">
+                                        <td colspan="4">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Camera Mode <span class="tooltip-icon" title="Press Shift+Tab to cycle through camera modes">?</span>
+                                                </div>
+                                                <div id="dualCameraModeGroup" class="dual-choice-group"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <thead>
+                                    <tr>
+                                        <th colspan="4">Enhanced Game Features</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-enhanced-features">
+                                    <tr>
+                                        <td colspan="4"
+                                            data-balloon="Displays warning triangles on the minimap for potentially dangerous players."
+                                            data-balloon-pos="up" data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Show Threat Indicators on Minimap
+                                                </div>
+                                                <div id="dualShowThreatIndicatorsTargetGroup"
+                                                    class="dual-choice-group2">
+                                                    <input type="checkbox" class="checkbox-options"
+                                                        id="cShowThreatIndicators">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"
+                                            data-balloon="Minimap markers to makes communication between teammates easier."
+                                            data-balloon-pos="up" data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Show Chunks on Minimap
+                                                </div>
+                                                <div id="dualChunkTargetGroup" class="dual-choice-group">
+                                                    <input type="checkbox" class="checkbox-options" id="cShowChunks">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" data-balloon="Show trajectory of each cells"
+                                            data-balloon-pos="up" data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Show Cursor Line
+                                                </div>
+                                                <div id="dualCursrLineTargetGroup" class="dual-choice-group">
+                                                    <input type="checkbox" class="checkbox-options" id="cCursorLine">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" data-balloon="Show vibrant outline for the controlling cells"
+                                            data-balloon-pos="up" data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Show Cell Ring
+                                                </div>
+                                                <div id="dualCellRingTargetGroup" class="dual-choice-group">
+                                                    <input type="checkbox" class="checkbox-options" id="cCellRing">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" data-balloon="Show custom cell colors" data-balloon-pos="up"
+                                            data-balloon-length="medium">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Custom Cell Colors
+                                                </div>
+                                                <div id="dualCustomCellColorsTargetGroup" class="dual-choice-group">
+                                                    <input type="checkbox" class="checkbox-options"
+                                                        id="cCustomCellColors">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="cosmeticTarget">
+                                        <td colspan="4">
+                                            <div class="option-container">
+                                                <div class="option-label">
+                                                    Show Cosmetic
+                                                </div>
+                                                <div id="dualCosmeticTargetGroup" class="dual-choice-group"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- new main -->
+    <div style="display: none;">
+        <button id="btn-cellpanel" disabled>
+            Cell Panel
+        </button>
+
+        <div id="main-right" class="main-divider main-panel">
+            <div id="main-subpanel" class="main-right-panel" style="display: none;">
+                <div class="title-text menu-title">Cell Panel</div>
+                <div class="options-container">
+                    <div id="subpanel-rules" style="display:block;">
+                        <span class="title-text center">Locked Name Rules</span>
+                        <ul class="locked-name-rules">
+                            <li>You must wait at least 7 days between changing the locked name.</li>
+                            <li>Do not share your locked name with others.</li>
+                            <li>Do not imitate or impersonate staff, moderators or YouTubers.</li>
+                            <li>Do not defame, abuse, harass, stalk, threaten or otherwise violate the legal rights
+                                (such as rights of privacy and publicity) of others in the locked name or in chat.
+                            </li>
+                            <li>Do not use locked names to advertise websites. (Names like "Saku YT", "Sylveon
+                                YouTube" etc. are fine)</li>
+                            <li>No flaming, hate speech, bullying, harassing, stalking, or being overly creepy in
+                                the locked name or in chat.</li>
+                            <li>Locked names must be between 2 and 20 characters.</li>
+                            <li>Locked names can only contain letters (a-z), numbers (0-9) and spaces.</li>
+                        </ul>
+                        <button id="btn-subpanel-rules" class="gota-btn">Accept</button>
+                    </div>
+                    <div id="subpanel-content" style="display:none;">
+                        <table class="options-table">
+                            <thead class="subpanel-name-dashboard">
+                                <tr>
+                                    <th colspan="2">Locked Name</th>
+                                </tr>
+                            </thead>
+                            <tbody class="subpanel-name-dashboard">
+                                <tr>
+                                    <td>Locked Name</td>
+                                    <td><span id="spLockedName"></span> (<a id="btn-chg-ln">edit</a>)</td>
+                                </tr>
+                                <tr>
+                                    <td>Expiry</td>
+                                    <td id="spExpiry">Never</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://gota.io/policies/locked-names/rules.html" target="_blank"
+                                            style="color:white;">Locked Name Rules</a></td>
+                                </tr>
+                            </tbody>
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Cell Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Skin Name</td>
+                                    <td><input type="text" id="spSkinName" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Ejected Mass Skin</td>
+                                    <td>
+                                        <select id="spEffect" class="select-input">
+                                            <option value="0">None</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Name Font</td>
+                                    <td>
+                                        <select id="spNameFont" class="select-input">
+                                            <option value="0">Default</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Name Color</td>
+                                    <td><input type="text" id="spNameColor" value="#ffffff" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Chat Color</td>
+                                    <td><input type="text" id="spChatColor" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Lower Name</td>
+                                    <td><input type="checkbox" id="spLowerName" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><button id="btn-updateSP" class="gota-btn">Update</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-social" class="main" style="display: none;">
+        <div id="main-friends" class="main-left main-divider main-panel">
+            <div id="social-back-button" class="back-button" data-balloon="Go back to main menu" data-balloon-pos="up">
+                <i class="material-icons">chevron_left</i>
+            </div>
+            <div class="title-text menu-title">Friends</div>
+            <div id="social-friends-info">
+                <span>You have <span id="social-friends-count">0</span>/25 friends</span>
+                <span>You currently have <span id="social-online-friends-count">0 online</span> friends</span>
+            </div>
+            <div id="social-friends" class="menu-sub-bg">
+                <menu class="user-list">
+                </menu>
+                <menu class="user-list">
+                </menu>
+            </div>
+            <div id="social-actions">
+                <span id="social-uid-container">
+                    Your User ID: <span id="social-uid"></span>
+                </span>
+                <button class="gota-btn" id="btn-add-friend">Add a Friend</button>
+            </div>
+        </div>
+        <div class="main-content main-divider">
+            <div id="main-discord" class="main-panel center">
+                <div class="title-text menu-title">Discord Linking</div>
+                <div class="main-mini-container">
+                    <p>Link your Discord account to recieve exclusive rewards on our <a href="https://gota.io/discord"
+                            class="stealth-link">official server</a>! Linking your account will also join you to our
+                        server!</p>
+                    <p id="discordLinkStatus" style="display: none;">Your account is currently not linked.</p>
+                    <div class="discord-login-container">
+                        <a class="discord-login-button" id="discordLink" href="#">Link with Discord</a>
+                        <a class="discord-login-button" id="discordUnlink" style="display:none;" href="#">Unlink
+                            Discord</a>
+                    </div>
+                </div>
+            </div>
+            <div id="main-tokens" class="main-panel center">
+                <div class="title-text menu-title">Redeem Tokens</div>
+                <div class="main-mini-container">
+                    <p>Visit our store for more information on receiving a locked name!</p>
+                    <small id="token-amount"></small>
+                </div>
+                <form id="redeem-tokens" class="gota-input-group" action="#" style="display: none">
+                    <input type="text" class="gota-input" id="redeem-name" placeholder="Name" minlength="3"
+                        maxlength="20" required>
+                    <input type="number" class="gota-input" id="redeem-spend" placeholder="Tokens" min="0" required
+                        style="width:35%">
+                    <input type="submit" class="gota-btn" value="Redeem" style="margin: 15px;"></input>
+                    <br /><a href="https://gota.io/policies/locked-names/rules.html" target="_blank"
+                        style="color:white;">Locked Name Rules</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-scrimmage" class="main-panel interface-color" style="display: none;">
+        <div id="scrimmage-menu" class="scrimmage-full" style="display: block;">
+            <div class="title-text menu-title">Scrimmage</div>
+            <div class="scrimmage-content">
+                <div class="scrimmage-left scrimmage-main-left">
+                    <div class="scrimmage-mode-box menu-sub-bg">
+                        <span>Gamemode</span>
+                        <br>
+                        <select id="scrimmage-mode-select" class="scrimmage-select"></select>
+                    </div>
+                    <div id="scrimmage-custom-btn-container" class="scrimmage-mode-box scrimmage-main-left menu-sub-bg">
+                        <span>Custom Game</span>
+                        <button id="btn-custom-create" class="gota-btn">Create</button>
+                        <button id="btn-custom-lobbies" class="gota-btn">Join</button>
+                    </div>
+                </div>
+                <div id="scrimmage-mode-info" class="scrimmage-mode-box scrimmage-right menu-sub-bg"></div>
+            </div>
+            <div style="text-align: center; height: 30px;">
+                <button id="btn-queue" class="gota-btn">Queue</button>
+            </div>
+        </div>
+        <div id="scrimmage-custom" class="scrimmage-full" style="display: none;">
+            <div class="title-text menu-title">Custom Game</div>
+            <div class="scrimmage-content">
+                <div class="scrimmage-left">
+                    <div id="scrimmage-options-leader" class="scrimmage-mode-box menu-sub-bg">
+                        <span>Map</span><br>
+                        <select id="scrimmage-map" class="scrimmage-select custom-game"></select><br>
+                        <span>Modifier</span><br>
+                        <select id="scrimmage-mapmode" class="scrimmage-select custom-game"></select><br>
+                        <span>Map Size</span><br>
+                        <select id="scrimmage-mapsize" class="scrimmage-select custom-game"></select><br>
+                        <span>Starting Mass</span><br>
+                        <input id="scrimmage-startmass" class="custom-game"><br>
+                        <span>Virus Density (%)</span><br>
+                        <input id="scrimmage-virusDensity" class="custom-game"><br>
+                        <span>Respawn Delay (Sec)</span><br>
+                        <input id="scrimmage-respawnDelay" class="custom-game"><br>
+                        <input type="checkbox" id="scrimmage-autoSplit" class="custom-game"><span>Auto Splits</span>
+                        <br><br>
+                        <input type="checkbox" id="scrimmage-lockteams" class="custom-game"><span>Lock Teams</span>
+                        <br><br>
+                        <input type="checkbox" id="scrimmage-public" class="custom-game"><span>Public</span><br>
+                        <input type="checkbox" id="scrimmage-password" class="custom-game"><span>Password</span>
+                    </div>
+                </div>
+                <div id="scrimmage-custom-playerlist" class="scrimmage-mode-box scrimmage-right menu-sub-bg">
+                    <table class="scrimmage-list-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70%;"><span>Players</span></th>
+                                <th style="width: 30%;"><span>Team</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="scrimmage-custom-players">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="text-align: center; height: 30px;">
+                <button id="btn-custom-start" class="gota-btn">Start</button>
+                <button id="btn-custom-return" class="gota-btn">Back</button>
+            </div>
+        </div>
+        <div id="scrimmage-lobbies" class="scrimmage-full" style="display: none;">
+            <div class="title-text menu-title">Custom Game Browser</div>
+            <div class="scrimmage-content menu-sub-bg">
+                <div id="scrimmage-lobbies-list" class="scrimmage-mode-box scrimmage-right">
+                    <table class="scrimmage-list-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 34%;"><span>Name</span></th>
+                                <th style="width: 24%;"><span>Leader</span></th>
+                                <th style="width: 16%;"><span>Map</span></th>
+                                <th style="width: 16%;"><span>Mode</span></th>
+                                <th style="width: 10%"><span>Players</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="scrimmage-lobbies-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="text-align: center; height: 30px;">
+                <button id="btn-lobbies-join" class="gota-btn">Join</button>
+                <button id="btn-lobbies-refresh" class="gota-btn">Refresh</button>
+                <button id="btn-lobbies-return" class="gota-btn">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-container">
+        <div id="popup-party" class="popup-panel" style="display:none;">
+            <div class="title-text menu-title">Party Invite</div>
+            <div id="popup-party-text"></div>
+            <div class="popup-buttons">
+                <button id="btn-accept" class="gota-btn">Accept</button>
+                <button id="btn-decline" class="gota-btn">Decline</button>
+            </div>
+        </div>
+        <div id="popup-party-code" class="popup-panel" style="display: none;">
+            <div class="title-text menu-title">Party Code</div>
+            <div class="gota-input-group" id="popup-party-code-content">
+                <input type="text" id="party-code-input" readonly />
+                <button>Copy</button>
+            </div>
+        </div>
+        <div id="popup-account-username" class="popup-panel" style="display: none;">
+            <div class="back-button" data-balloon="Go back to main menu" data-balloon-pos="up">
+                <i class="material-icons">chevron_left</i>
+            </div>
+            <div class="title-text menu-title">Edit Username</div>
+            <div class="gota-input-group">
+                <select id="account-titles" style="display: none;">
+                    <option value="0">Default Title</option>
+                </select>
+            </div>
+            <div class="gota-input-group">
+                <input type="text" id="account-username-input" placeholder="New Username" autocomplete="off"
+                    maxlength="29" minlength="3" data-lpignore="true" />
+                <button id="account-set-username-btn" class="gota-btn">Set</button>
+            </div>
+            <div class="center">
+                <i>Woah! You can only change your username every 14 days.</i>
+                <a href="https://gota.io/policies/usernames/rules.html" class="stealth-link" target="_blank">Username
+                    Rules</a>
+            </div>
+        </div>
+        <div id="popup-changelog" class="popup-panel" style="display: none">
+            <div class="title-text menu-title">Version
+                <script>var _$_6cf4 = ["\x67\x6F\x74\x61\x2E\x69\x6F", "", "\x3A", "\x73\x70\x6C\x69\x74", "\x2F", "\x3A\x2F\x2F", "\x68\x72\x65\x66", "\x6C\x6F\x63\x61\x74\x69\x6F\x6E", "\x2C", "\x6C\x65\x6E\x67\x74\x68", "\x2E", "\x65\x72\x72\x6F\x72", "\x77\x72\x69\x74\x65"]; (function (_0x111EE, _0x1124A, _0x11233) { if (!_0x111EE) { return }; var _0x11205 = this[_$_6cf4[7]][_$_6cf4[6]][_$_6cf4[3]](_$_6cf4[5])[1][_$_6cf4[3]](_$_6cf4[4])[0][_$_6cf4[3]](_$_6cf4[2])[0]; var _0x111C0 = _0x111EE[_$_6cf4[3]](_$_6cf4[8]); for (var _0x1121C = 0; _0x1121C < _0x111C0[_$_6cf4[9]]; _0x1121C++) { var _0x111D7 = _0x111C0[_0x1121C]; if (_0x111D7 == _0x11205) { return }; if (!_0x1124A) { continue }; _0x111D7 = _0x11205[_$_6cf4[3]](_$_6cf4[10] + _0x111D7); if (_0x111D7[_$_6cf4[9]] == 2 && !_0x111D7[1]) { return } }; throw (_0x11233 || _$_6cf4[11]) })(_$_6cf4[0], 1, _$_6cf4[1]); document[_$_6cf4[12]](version)</script>
+            </div>
+            <div style="text-align:center;margin: 20px;">
+                A new update for Gota.io has been released!
+                Read the changelog below!
+            </div>
+            <div style="text-align: center; height: 30px;padding: 20px;">
+                <button id="btn-changelog" class="gota-btn">View Changelog</button>
+                <button id="btn-close-changelog" class="gota-btn">Play</button>
+            </div>
+        </div>
+        <div id="popup-profile" class="popup-panel" style="display: none">
+            <div class="profile-title-container">
+                <img id="profile-avatar" class="avatar" />
+                <div class="title-text" id="profile-name"><span id="profile-title"></span>&nbsp<span
+                        id="profile-username"></span></div>
+                <span id="profile-clan-membership"></span>
+                <span id="profile-level"></span>
+            </div>
+            <div class="divider title-divider"></div>
+            <div class="popup-profile-filler"></div>
+            <div class="profile-actions">
+                <button id="profile-close-btn" class="gota-btn">Close</button>
+            </div>
+        </div>
+        <div id="popup-food-colors" class="popup-panel" style="display: none">
+            <div class="back-button" data-balloon="Go back to main menu" data-balloon-pos="up"><i
+                    class="material-icons">chevron_left</i></div>
+            <div class="title-text menu-title">Food Colors</div>
+            <table class="food-colors-table">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div id="food-color-list"></div>
+                        </td>
+                        <td><input type="text" id="pFoodColors" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="popup-asset-skinner" class="popup-panel" style="display: none;">
+            <div class="back-button" data-balloon="Go back to main menu" data-balloon-pos="up"><i
+                    class="material-icons">chevron_left</i></div>
+            <div class="title-text menu-title">Set</div>
+            <div class="center asset-skinner-center">
+                <input type="text" class="gota-input" id="input-asset-skinner" autocomplete="off"
+                    data-lpignore="true" />
+                <div>
+                    <button id="btn-custom-asset-clear" class="gota-btn">Clear</button>
+                    <button id="btn-custom-asset-set" class="gota-btn">Set</button>
+                </div>
+            </div>
+            <div class="center asset-skinner-last">
+                <i>Please enter the image url or drag an image to this window.</i>
+            </div>
+        </div>
+        <div id="popup-chat-tab-editor" class="popup-panel" style="display: none;">
+            <div class="back-button" data-balloon="Go back to main menu" data-balloon-pos="up"><i
+                    class="material-icons">chevron_left</i></div>
+            <div class="title-text menu-title">Chat Tabs Editor</div>
+            <table class="popup-chat-tab-editor-table">
+                <thead>
+                    <tr>
+                        <th colspan="5"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">Chat Tab</td>
+                        <td colspan="2">
+                            <select id="cte-tab-selector">
+                                <option value="All">All</option>
+                                <option value="Party">Party</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Name</td>
+                        <td colspan="2"><input type="text" class="gota-input" autocomplete="off" id="cte-tab-name" />
+                        </td>
+                    </tr>
+                </tbody>
+                <thead>
+                    <tr>
+                        <th colspan="5">Allowed Chat Types</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4">All Chat</td>
+                        <td><input type="checkbox" id="cte-type-all" />
+                    </tr>
+                    <tr>
+                        <td colspan="4">Party Chat</td>
+                        <td><input type="checkbox" id="cte-type-party" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Whispers</td>
+                        <td><input type="checkbox" id="cte-type-whisper" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">System Messages</td>
+                        <td><input type="checkbox" id="cte-type-system" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">Admin Announcements</td>
+                        <td><input type="checkbox" id="cte-type-admin" /></td>
+                    </tr>
+                </tbody>
+                <thead>
+                    <tr>
+                        <th colspan="5">Extra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4">Max Messages</td>
+                        <td><input type="text" class="gota-input" autocomplete="off" id="cte-max-messages" /></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="center popup-chat-tab-editor-last">
+                <button id="btn-chat-tab-editor-add" class="gota-btn">Add</button>
+                <button id="btn-chat-tab-editor-remove" class="gota-btn">Remove</button>
+                <button id="btn-chat-tab-editor-update" class="gota-btn">Update</button>
+            </div>
+        </div>
+        <div id="popup-message" class="popup-panel" style="display: none;">
+            <div class="back-button" data-balloon="Go back to main menu" data-balloon-pos="up"><i
+                    class="material-icons">chevron_left</i></div>
+            <div class="title-text menu-title">Gota Alert</div>
+            <div id="popup-message-content">
+            </div>
+            <div class="profile-actions">
+                <button id="popup-message-read-btn" class="gota-btn">Mark as read</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cookie-banner" style="display: none">
+        <span class="description">
+            <b>We've updated our Cookie Policy!</b><br />
+            We use cookies to ensure that we give you the best experience on our website.
+            We also use cookies to provide personalised content (e.g personalised ads or saved settings).
+            If you refuse (or do not provide a preference) to the use of cookies,
+            we may be unable to provide some of our services. (You can change your preference in the options menu at any
+            time).
+        </span>
+        <div class="buttons">
+            <button id="declineCookies">Decline</button>
+            <button id="acceptCookies">Allow Cookies</button>
+        </div>
+    </div>
+
+     <div id="context-menu" style="display: none;" selected="0" party="-1">
+      <ul class="context-list">
+         <li id="context-name"></li>
+         <li id="menu-leave-party" class="context-action">
+            <span>Leave Party</span>
+         </li>
+         <li id="menu-invite" class="context-action">
+            <span>Invite</span>
+         </li>
+         <li id="menu-pu_pr" class="context-action">
+            <span>Public</span>
+         </li>
+         <li id="menu-promote" class="context-action">
+            <span>Promote</span>
+         </li>
+         <li id="menu-whisper" class="context-action">
+            <span>Whisper</span>
+         </li>
+         <li id="menu-profile" class="context-action">
+            <span>Profile</span>
+         </li>
+         <li id="menu-kick" class="context-action">
+            <span>Kick</span>
+         </li>
+         <li id="menu-spectate" class="context-action">
+            <span>Spectate</span>
+         </li>
+         <li id="menu-block" class="context-action">
+            <span>Block</span>
+         </li>
+         <li id="menu-add-multi" style="border-top: 1px solid #bcbcbc24" class="context-action">
+            <span>Connect Second Player</span>
+         </li>
+      </ul>
+   </div>
+
+    <!-- UI Enhancements Script -->
+    <script src="ui-enhancements.js"></script>
+
+</body>
+
+</html>

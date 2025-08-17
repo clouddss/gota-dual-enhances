@@ -1,6 +1,10 @@
 # Dual Enhances - Gota.io Tampermonkey Script
+# Co
 
 A feature-rich Tampermonkey userscript for Gota.io that adds dual-player control, advanced gameplay features, and UI improvements.
+<img width="2529" height="1462" alt="image" src="https://github.com/user-attachments/assets/efd06e6a-f3bb-47d4-ad68-5133bcb086b3" />
+<img width="2741" height="1462" alt="image" src="https://github.com/user-attachments/assets/865de679-e327-465c-85d6-0713ff9129a4" />
+
 
 ## Features
 
@@ -226,6 +230,15 @@ Report issues or request features through:
 - GitHub Issues (if hosted on GitHub)
 - Tampermonkey script comments section
 - Gota.io community forums
+- 
+## Credits & Acknowledgments
+
+Special thanks to the following contributors who helped make this project possible:
+- **Ryal** - Feature development and innovative ideas
+- **Onyx** - Frontend design and UI/UX concepts
+- **Abyx** - Frontend development and implementation
+
+This project was developed collaboratively with the help and inspiration from the Gota.io community.
 
 ## Disclaimer
 
